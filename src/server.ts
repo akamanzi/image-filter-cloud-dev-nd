@@ -31,11 +31,12 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
   app.get("/filteredimage",async (req:Request, res:Response) => {
+    
+    const imageUrl = req.query.image_url;
+    if (!imageUrl){
+      res.status(400).send("image url not specify. Please specify image url");
+    }
     try {
-      const imageUrl = req.query.image_url;
-      if (!imageUrl){
-        res.status(400).send("image url not specify. Please specify image url");
-      }
       const filteredImage = await filterImageFromURL(imageUrl);
       res.status(200).sendFile(filteredImage);
       console.log("imagepath:",filteredImage)
@@ -44,7 +45,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
         deleteLocalFiles([filteredImage]);
       })
     } catch (error) {
-      res.status(500).send("please pass in correct image url");
+      res.status(422).send(error);
     }
     
   })
