@@ -1,27 +1,27 @@
 # Udagram Image Filtering Microservice
 
-Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
+Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. The filtering microservice is a Node-Express application which runs a simple script to filter images returns filtered versions of the images.
 
-The project is split into three parts:
-1. [The Simple Frontend](https://github.com/udacity/cloud-developer/tree/master/course-02/exercises/udacity-c2-frontend)
-A basic Ionic client web application which consumes the RestAPI Backend. [Covered in the course]
-2. [The RestAPI Backend](https://github.com/udacity/cloud-developer/tree/master/course-02/exercises/udacity-c2-restapi), a Node-Express server which can be deployed to a cloud service. [Covered in the course]
-3. [The Image Filtering Microservice](https://github.com/udacity/cloud-developer/tree/master/course-02/project/image-filter-starter-code), the final project for the course. It is a Node-Express application which runs a simple script to process images. [Your assignment]
-
-## Tasks
+## Tasks involved in this project
 
 ### Setup Node Environment
 
 You'll need to create a new node server. Open a new terminal within the project directory and run:
 
-1. Initialize a new project: `npm i`
-2. run the development server with `npm run dev`
+1. Clone this repository
+2. Install the packages: `npm i`
+3. run the development server with `npm run dev`
 
-### Create a new endpoint in the server.ts file
+### Create a filterimage endpoint
 
-The starter code has a task for you to complete an endpoint in `./src/server.ts` which uses query parameter to download an image from a public URL, filter the image, and return the result.
+Create a new endpoint `filteredimage` which takes as a parameter the image url. This endpoind does the following
 
-We've included a few helper functions to handle some of these concepts and we're importing it for you at the top of the `./src/server.ts`  file.
+  1. Validate the `image_url` parameter
+  2. Filter the images
+  3. Return the filtered image
+  4. Deletes the image after it is returned.
+
+The endpoint uses helper methods below to filter the images.
 
 ```typescript
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
@@ -29,20 +29,22 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
 ### Deploying your system
 
-Follow the process described in the course to `eb init` a new application and `eb create` a new environment to deploy your image-filter service! Don't forget you can use `eb deploy` to push changes.
+This application was deployed to AWS using Elastic Beanstalk (EB). The following steps were followed to deploy the application using EB
 
-## Stand Out (Optional)
+1. build the project: run `npm run build` command to build the project into `Archive.zip` in a `www` folder
+2. Create EB application: `eb init`, this launches an interactive cli where you enter the details of the application such as application name...etc. In addition this command creates a configuration file which is used when deploying.
+3. Create the application environment: `eb create` creates the environment which you want to run the application and deploys the application. For this project a dev environment was created but in a real world scenario, it is ideal to have a staging and production environment.
+4. Deploy updates: `eb deploy` updates the environment with new changes.
 
-### Refactor the course RESTapi
+### Testing the application
 
-If you're feeling up to it, refactor the course RESTapi to make a request to your newly provisioned image server.
+To test this application in the web browser add: `http://image-filter-service-dev.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://upload.wikimedia.org/wikipedia/commons/2/27/Capitol_Building_Full_View.jpg` in the browser of your choice.
 
-### Authentication
+This should return filtered version of the image
 
-Prevent requests without valid authentication headers.
-> !!NOTE if you choose to submit this, make sure to add the token to the postman collection and export the postman collection file to your submission so we can review!
+Using postman:
+create a get request add the url: `http://image-filter-service-dev.us-east-1.elasticbeanstalk.com/filteredimage`
+Add `image_url` in the params tab and use `https://upload.wikimedia.org/wikipedia/commons/2/27/Capitol_Building_Full_View.jpg` as the value.
 
-### Custom Domain Name
 
-Add your own domain name and have it point to the running services (try adding a subdomain name to point to the processing server)
-> !NOTE: Domain names are not included in AWS’ free tier and will incur a cost.
+**NOTE**: By the time you access this link, the above urls may not be still accessible. In this case it is ideal to run the application locally as indicated in the [setup-node-environment](#setup-node-environment)
